@@ -1,46 +1,57 @@
-import React, { useEffect } from 'react'
-import {  Heading, Input, InputGroup, Button, Box } from '@chakra-ui/core'
+import React, {  useEffect, useState } from 'react'
+import {  Heading, Input, InputGroup, Button, Box, useToast } from '@chakra-ui/core'
 import { Link } from 'react-router-dom'
 import useForm from '../hooks/useForm'
-import AUTH_SERVICE from '../services/index'
+import AUTH_SERVICE from '../services/auth_service'
 import Swal from 'sweetalert2'
+import handleAsync from '../utils/handleAsync'
+import { useAuth } from '../AuthContext.jsx'
 
-export default function SignUp({history}) {
+
+export default function Login({history}) {
+  const toast = useToast()
+  const [, dispatch] = useAuth()
+  const [loading, setLoading] = useState(false)
   const [form, handleInput] = useForm()
-  const loggedUser = JSON.parse(localStorage.getItem('loggedUser'))
 
-  useEffect(() => {
-    if (loggedUser) return history.push('/todo')
 
-  }, [loggedUser, history])
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault()
-    AUTH_SERVICE.SIGNUP(form)
-      .then(response => {
-        history.push('/')
-        }
-      )
-      .catch(err => {
-        Swal.fire({
-          title: 'Error',
-          text: err.response.data.err.message,
-          icon: 'error',
-          showCancelButton: false,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Ok'
-          }).then((result) => {
-            window.location.reload('/todo') 
-          })
+
+    setLoading(true)
+
+    const data = {
+      email: form.email,
+      password: form.password
+    }
+
+    const { user } = await handleAsync(() => AUTH_SERVICE.LOGIN(data))
+    setLoading(false)
+
+    if (user) {
+      dispatch({ type: 'LOGIN', payload: { user } })
+    } else {
+      toast({
+        position: 'top-right',
+        title: 'Unauthorized',
+        description: 'Email or password are incorrect.',
+        status: 'error',
+        duration: 3000,
+        isClosable: true
       })
+    }
   }
 
+  
 
   return (
     <Box as="main" display="flex" alignItems="center" alignContent="center" flexDirection="column" justifyContent="center" boxSizing="border-box" h="85vh" w="100%">
+          <Heading as="h2"  size="lg" mb={5}>
+              Welcome to Best Deal Denver CMS
+          </Heading>
     
           <Heading as="h3" size="lg" mb={5}>
-              Sign Up
+              Login
           </Heading>
       <Box as="form" w="100%" alignItems="center" alignContent="center" display="flex" flexDirection="column">
           
@@ -49,17 +60,17 @@ export default function SignUp({history}) {
                   color="gray"
                   type="email"
                   placeholder="Email"
-                  name="email"
                   onChange={handleInput}
+                  name="email"
                 />
           </InputGroup>
           <InputGroup  w="30%" size="lg" mb={3} >
                 <Input
                   color="gray"
                   type="password"
-                  name="password"
                   onChange={handleInput}
                   placeholder="Password"
+                  name="password"
                 />
           </InputGroup>
           <Button
@@ -72,10 +83,10 @@ export default function SignUp({history}) {
           type="submit"
           alignSelf="center"
           >
-            Sign Up
+            Login
           </Button>
           <Box color="gray" mt={6} alignSelf="center">
-            <Link to="/">or Login</Link>
+            <Link to="/sign">or Sign Up</Link>
           </Box>
       </Box>
       
