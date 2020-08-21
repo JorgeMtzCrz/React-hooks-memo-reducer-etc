@@ -2,14 +2,14 @@ import React, { useState, useRef } from 'react'
 import useSWR from 'swr'
 import composeData from '../../utils/composeData'
 import handleAsync from '../../utils/handleAsync'
-import { ALL_URL, ALL_FETCHER, CREATE_HEADER, DELETE_HEADER } from '../../services/header_service'
+import { ALL_URL, ALL_FETCHER, CREATE_PRODUCT, DELETE_PRODUCT } from '../../services/products_service'
 import { UPLOAD_PHOTO} from '../../services/general_service'
 import { Flex, Heading, Button, SimpleGrid } from '@chakra-ui/core'
-import HeaderCreate from '../../components/HeaderCreate'
-import HeaderCard from '../../components/HeaderCard'
+import ProductsCreate from '../../components/ProductsCreate'
+import ProductsCard from '../../components/ProductsCard'
 import useInput from '../../hooks/useInput'
 
-export default function HeaderSection() {
+export default function ProductsSection() {
   const [create, setCreate] = useState(false)
   const [img, setImg] = useState('')
   const imgEl = useRef()
@@ -26,35 +26,37 @@ export default function HeaderSection() {
 
   // create data
   const title = useInput('')
-  const subtitle = useInput('')
-  const url = useInput('')
+  const price = useInput('')
+  const cathegory = useInput('')
   const description = useInput('')
+  const discount = useInput('')
 
 
   const { data, mutate } = useSWR(ALL_URL, ALL_FETCHER)
-  const headers = data && data.headers
+  const products = data && data.products
   const [visibility, setVisibility] = useState(false)
   const [modalInfo, setModalInfo] = useState({ title: '', content: '', type: 'success' })
 
   const submit = async e => {
     e.preventDefault()
-    const newHeader = composeData({ title, subtitle, description, url  })
-    const response = await handleAsync(() => CREATE_HEADER({newHeader, img}))
-    if (response.header) {
+    const newProduct = composeData({ title, price, description, cathegory, discount  })
+    console.log(newProduct)
+    const response = await handleAsync(() => CREATE_PRODUCT({newProduct, img}))
+    if (response.product) {
       setModalInfo({
-        title: 'Header Created',
-        content: 'Your header has been created successfully!',
+        title: 'Product Created',
+        content: 'Your product has been created successfully!',
         type: 'success'
       })
     } else {
       setModalInfo({
         title: 'ERROR',
         content:
-          'UH OH! There has been an error and your header has not been created. Please check your internet connection and try again.',
+          'UH OH! There has been an error and your product has not been created. Please check your internet connection and try again.',
         type: 'error'
       })
     }
-    mutate([response.headers, ...data.headers], true)
+    mutate([response.products, ...data.products], true)
     setVisibility(true)
   }
 
@@ -63,12 +65,12 @@ export default function HeaderSection() {
     setCreate(false)
   }
 
-  const deleteHeader = async id => {
-    await handleAsync(() => DELETE_HEADER(id))
+  const deleteProduct = async id => {
+    await handleAsync(() => DELETE_PRODUCT(id))
 
     mutate(
       ALL_URL,
-      data.headers.filter(header => header._id !== id),
+      data.products.filter(product => product._id !== id),
       false
     )
   }
@@ -76,30 +78,31 @@ export default function HeaderSection() {
   return (
     <Flex direction="column" align="flex-start" h="100%">
       <Heading size="lg" as="h2" color="gray.500" mb={[3, 3, 5, 10]}>
-        Headers
+       Products
       </Heading>
       {!create ? (
         <>
           <SimpleGrid mb={[3, 3, 5, 10]} alignSelf="flex-end" columns="1" spacing={[5, 5, 10, 10]}>
             <Button onClick={() => setCreate(true)} variantColor="bluebdd" size="lg">
-              Add Header
+              Add Product
             </Button>
           </SimpleGrid>
           <Heading size="md" as="h3" color="bluebdd.800" mb={[3, 3, 5, 5]}>
-            Header Entries
+            Products Entries
           </Heading>
-          <HeaderCard deleteHeader={deleteHeader} data={headers} />
+          <ProductsCard deleteProduct={deleteProduct} data={products} />
         </>
       ) : (
-        <HeaderCreate
+        <ProductsCreate
           visibility={visibility}
           closeModal={closeModal}
           modalInfo={modalInfo}
           submit={submit}
           title={title}
-          subtitle={subtitle}
-          url={url}
           description={description}
+          discount={discount}
+          price={price}
+          cathegory={cathegory}
           handleImage={handleImage}
           cancel={() => setCreate(false)}
         />

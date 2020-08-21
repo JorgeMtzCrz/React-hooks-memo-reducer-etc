@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/core'
 import MyModal from './MyModal'
 
-export default function HeaderCreate(props) {
+export default function BannerCreate(props) {
   const {
     submit,
     cancel,
@@ -78,20 +78,6 @@ export default function HeaderCreate(props) {
                 type="text"
                 id="url"
                 aria-describedby="url-helper-text"
-              />
-            </FormControl>
-
-            <FormControl>
-              <FormLabel fontSize="xl" htmlFor="description" color="gray.500">
-                DESCRIPTION
-              </FormLabel>
-              <Textarea
-                {...description}
-                id="description"
-                aria-describedby="description-helper-text"
-                focusBorderColor="bluebdd.500"
-                size="lg"
-                resize="none"
               />
             </FormControl>
             <FormControl>

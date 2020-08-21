@@ -2,14 +2,14 @@ import React, { useState, useRef } from 'react'
 import useSWR from 'swr'
 import composeData from '../../utils/composeData'
 import handleAsync from '../../utils/handleAsync'
-import { ALL_URL, ALL_FETCHER, CREATE_HEADER, DELETE_HEADER } from '../../services/header_service'
+import { ALL_URL, ALL_FETCHER, CREATE_BANNER, DELETE_BANNER } from '../../services/banner_service'
 import { UPLOAD_PHOTO} from '../../services/general_service'
 import { Flex, Heading, Button, SimpleGrid } from '@chakra-ui/core'
-import HeaderCreate from '../../components/HeaderCreate'
-import HeaderCard from '../../components/HeaderCard'
+import BannerCreate from '../../components/BannerCreate'
+import BannerCard from '../../components/BannerCard'
 import useInput from '../../hooks/useInput'
 
-export default function HeaderSection() {
+export default function BannerSection() {
   const [create, setCreate] = useState(false)
   const [img, setImg] = useState('')
   const imgEl = useRef()
@@ -28,21 +28,20 @@ export default function HeaderSection() {
   const title = useInput('')
   const subtitle = useInput('')
   const url = useInput('')
-  const description = useInput('')
 
 
   const { data, mutate } = useSWR(ALL_URL, ALL_FETCHER)
-  const headers = data && data.headers
+  const banners = data && data.banners
   const [visibility, setVisibility] = useState(false)
   const [modalInfo, setModalInfo] = useState({ title: '', content: '', type: 'success' })
 
   const submit = async e => {
     e.preventDefault()
-    const newHeader = composeData({ title, subtitle, description, url  })
-    const response = await handleAsync(() => CREATE_HEADER({newHeader, img}))
-    if (response.header) {
+    const newBanner = composeData({ title, subtitle, url  })
+    const response = await handleAsync(() => CREATE_BANNER({newBanner, img}))
+    if (response.banner) {
       setModalInfo({
-        title: 'Header Created',
+        title: 'Banner Created',
         content: 'Your header has been created successfully!',
         type: 'success'
       })
@@ -50,11 +49,11 @@ export default function HeaderSection() {
       setModalInfo({
         title: 'ERROR',
         content:
-          'UH OH! There has been an error and your header has not been created. Please check your internet connection and try again.',
+          'UH OH! There has been an error and your banner has not been created. Please check your internet connection and try again.',
         type: 'error'
       })
     }
-    mutate([response.headers, ...data.headers], true)
+    mutate([response.banners, ...data.banners], true)
     setVisibility(true)
   }
 
@@ -63,12 +62,12 @@ export default function HeaderSection() {
     setCreate(false)
   }
 
-  const deleteHeader = async id => {
-    await handleAsync(() => DELETE_HEADER(id))
+  const deleteBanner = async id => {
+    await handleAsync(() => DELETE_BANNER(id))
 
     mutate(
       ALL_URL,
-      data.headers.filter(header => header._id !== id),
+      data.banners.filter(banner => banner._id !== id),
       false
     )
   }
@@ -76,22 +75,22 @@ export default function HeaderSection() {
   return (
     <Flex direction="column" align="flex-start" h="100%">
       <Heading size="lg" as="h2" color="gray.500" mb={[3, 3, 5, 10]}>
-        Headers
+        Banner
       </Heading>
       {!create ? (
         <>
           <SimpleGrid mb={[3, 3, 5, 10]} alignSelf="flex-end" columns="1" spacing={[5, 5, 10, 10]}>
             <Button onClick={() => setCreate(true)} variantColor="bluebdd" size="lg">
-              Add Header
+              Add Banner
             </Button>
           </SimpleGrid>
           <Heading size="md" as="h3" color="bluebdd.800" mb={[3, 3, 5, 5]}>
-            Header Entries
+            Banner Entries
           </Heading>
-          <HeaderCard deleteHeader={deleteHeader} data={headers} />
+          <BannerCard deleteHeader={deleteBanner} data={banners} />
         </>
       ) : (
-        <HeaderCreate
+        <BannerCreate
           visibility={visibility}
           closeModal={closeModal}
           modalInfo={modalInfo}
@@ -99,7 +98,6 @@ export default function HeaderSection() {
           title={title}
           subtitle={subtitle}
           url={url}
-          description={description}
           handleImage={handleImage}
           cancel={() => setCreate(false)}
         />

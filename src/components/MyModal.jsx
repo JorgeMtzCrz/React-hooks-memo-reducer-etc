@@ -29,7 +29,7 @@ export default function MyModal(props) {
         </ModalBody>
 
         <ModalFooter display="flex" alignItems="center" justifyContent="center">
-          <Button size="lg" variantColor="graypf" onClick={onClose}>
+          <Button size="lg" variantColor="bluebdd" color="white" onClick={onClose}>
             Close
           </Button>
         </ModalFooter>

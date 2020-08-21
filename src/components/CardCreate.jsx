@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/core'
 import MyModal from './MyModal'
 
-export default function HeaderCreate(props) {
+export default function CardCreate(props) {
   const {
     submit,
     cancel,
@@ -80,7 +80,6 @@ export default function HeaderCreate(props) {
                 aria-describedby="url-helper-text"
               />
             </FormControl>
-
             <FormControl>
               <FormLabel fontSize="xl" htmlFor="description" color="gray.500">
                 DESCRIPTION

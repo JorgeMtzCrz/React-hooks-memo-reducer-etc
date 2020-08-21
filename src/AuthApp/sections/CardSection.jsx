@@ -2,14 +2,14 @@ import React, { useState, useRef } from 'react'
 import useSWR from 'swr'
 import composeData from '../../utils/composeData'
 import handleAsync from '../../utils/handleAsync'
-import { ALL_URL, ALL_FETCHER, CREATE_HEADER, DELETE_HEADER } from '../../services/header_service'
+import { ALL_URL, ALL_FETCHER, CREATE_CARD, DELETE_CARD } from '../../services/card_service'
 import { UPLOAD_PHOTO} from '../../services/general_service'
 import { Flex, Heading, Button, SimpleGrid } from '@chakra-ui/core'
-import HeaderCreate from '../../components/HeaderCreate'
-import HeaderCard from '../../components/HeaderCard'
+import CardCreate from '../../components/HeaderCreate'
+import CardCard from '../../components/HeaderCard'
 import useInput from '../../hooks/useInput'
 
-export default function HeaderSection() {
+export default function CardSection() {
   const [create, setCreate] = useState(false)
   const [img, setImg] = useState('')
   const imgEl = useRef()
@@ -32,29 +32,29 @@ export default function HeaderSection() {
 
 
   const { data, mutate } = useSWR(ALL_URL, ALL_FETCHER)
-  const headers = data && data.headers
+  const cards = data && data.cards
   const [visibility, setVisibility] = useState(false)
   const [modalInfo, setModalInfo] = useState({ title: '', content: '', type: 'success' })
 
   const submit = async e => {
     e.preventDefault()
-    const newHeader = composeData({ title, subtitle, description, url  })
-    const response = await handleAsync(() => CREATE_HEADER({newHeader, img}))
-    if (response.header) {
+    const newCard = composeData({ title, subtitle, description, url  })
+    const response = await handleAsync(() => CREATE_CARD({newCard, img}))
+    if (response.card) {
       setModalInfo({
-        title: 'Header Created',
-        content: 'Your header has been created successfully!',
+        title: 'Card Created',
+        content: 'Your card has been created successfully!',
         type: 'success'
       })
     } else {
       setModalInfo({
         title: 'ERROR',
         content:
-          'UH OH! There has been an error and your header has not been created. Please check your internet connection and try again.',
+          'UH OH! There has been an error and your card has not been created. Please check your internet connection and try again.',
         type: 'error'
       })
     }
-    mutate([response.headers, ...data.headers], true)
+    mutate([response.cards, ...data.cards], true)
     setVisibility(true)
   }
 
@@ -63,12 +63,12 @@ export default function HeaderSection() {
     setCreate(false)
   }
 
-  const deleteHeader = async id => {
-    await handleAsync(() => DELETE_HEADER(id))
+  const deleteCard = async id => {
+    await handleAsync(() => DELETE_CARD(id))
 
     mutate(
       ALL_URL,
-      data.headers.filter(header => header._id !== id),
+      data.cards.filter(card => card._id !== id),
       false
     )
   }
@@ -76,22 +76,22 @@ export default function HeaderSection() {
   return (
     <Flex direction="column" align="flex-start" h="100%">
       <Heading size="lg" as="h2" color="gray.500" mb={[3, 3, 5, 10]}>
-        Headers
+        Cards
       </Heading>
       {!create ? (
         <>
           <SimpleGrid mb={[3, 3, 5, 10]} alignSelf="flex-end" columns="1" spacing={[5, 5, 10, 10]}>
             <Button onClick={() => setCreate(true)} variantColor="bluebdd" size="lg">
-              Add Header
+              Add Card
             </Button>
           </SimpleGrid>
           <Heading size="md" as="h3" color="bluebdd.800" mb={[3, 3, 5, 5]}>
-            Header Entries
+            Card Entries
           </Heading>
-          <HeaderCard deleteHeader={deleteHeader} data={headers} />
+          <CardCard deleteHeader={deleteCard} data={cards} />
         </>
       ) : (
-        <HeaderCreate
+        <CardCreate
           visibility={visibility}
           closeModal={closeModal}
           modalInfo={modalInfo}

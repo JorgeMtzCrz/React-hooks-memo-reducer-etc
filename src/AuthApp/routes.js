@@ -1,6 +1,9 @@
 import React from 'react'
 import PageSection from '../components/PageSection'
 import HeaderSection from './sections/HeaderSection'
+import BannerSection from './sections/BannerSection'
+import CardSection from './sections/CardSection'
+import ProductsSection from './sections/ProductsSection'
 
 
 export default [
@@ -18,18 +21,26 @@ export default [
     label: 'Banner',
     Component: () => (
       <PageSection>
-        <HeaderSection/>
+        <BannerSection/>
       </PageSection>
     )
   },
   {
-    path: '/app/promos',
-    label: 'Promos',
-    Component: () => <p>component</p>
+    path: '/app/cards',
+    label: 'Cards',
+    Component: () =>(
+      <PageSection>
+        <CardSection/>
+      </PageSection>
+    )
   },
   {
     path: '/app/products',
     label: 'Products',
-    Component: () => <p>component</p>
+    Component: () => (
+      <PageSection>
+        <ProductsSection/>
+      </PageSection>
+    )
   },
 ]

@@ -9,19 +9,21 @@ import {
   Input,
   Textarea,
   RadioGroup,
-  Radio
+  Radio,
+  Select
 } from '@chakra-ui/core'
 import MyModal from './MyModal'
 
-export default function HeaderCreate(props) {
+export default function ProductsCreate(props) {
   const {
     submit,
     cancel,
     title,
-    subtitle,
-    url,
+    price,
+    discount,
     photo,
     description,
+    cathegory,
     modalInfo,
     visibility,
     closeModal,
@@ -40,7 +42,7 @@ export default function HeaderCreate(props) {
         flexDirection="column"
       >
         <Box as="form" onSubmit={submit} display="flex" flexDirection="column">
-          <SimpleGrid w="100%" columns="2" spacing={[5, 5, 5, 20]}>
+          <SimpleGrid w="100%" columns="3" spacing={[5, 5, 5, 20]}>
             <FormControl>
               <FormLabel fontSize="xl" htmlFor="title" color="gray.500">
                 TITLE
@@ -48,39 +50,12 @@ export default function HeaderCreate(props) {
               <Input
                 {...title}
                 focusBorderColor="bluebdd.500"
-                size="lg"
+                size="m"
                 type="text"
                 id="title"
                 aria-describedby="subject-helper-text"
               />
             </FormControl>
-            <FormControl>
-              <FormLabel fontSize="xl" htmlFor="subtitle" color="gray.500">
-                SUBTITLE
-              </FormLabel>
-              <Input
-                {...subtitle}
-                focusBorderColor="bluebdd.500"
-                size="lg"
-                type="text"
-                id="subtitle"
-                aria-describedby="subtitle-helper-text"
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel fontSize="xl" htmlFor="url" color="gray.500">
-                URL
-              </FormLabel>
-              <Input
-                {...url}
-                focusBorderColor="bluebdd.500"
-                size="lg"
-                type="text"
-                id="url"
-                aria-describedby="url-helper-text"
-              />
-            </FormControl>
-
             <FormControl>
               <FormLabel fontSize="xl" htmlFor="description" color="gray.500">
                 DESCRIPTION
@@ -90,8 +65,53 @@ export default function HeaderCreate(props) {
                 id="description"
                 aria-describedby="description-helper-text"
                 focusBorderColor="bluebdd.500"
-                size="lg"
+                size="m"
                 resize="none"
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel fontSize="xl" htmlFor="cathegory" color="graypf.500">
+                CATHEGORY
+              </FormLabel>
+              <Select
+                {...cathegory} 
+                aria-describedby="description-helper-text"
+                color="gray.500"
+                type="select"
+                size="m" 
+                id="cathegory">
+                <option value="hdtvs" selected disabled>SELECT ONE</option>
+                <option value="hdtvs">HDTV'S</option>
+                <option value="accesories">ACCESORIES</option>
+                <option value="computers">COMPUTERS</option>
+                <option value="audio">AUDIO</option>
+                <option value="smartphones">SMARTPHONES</option>
+              </Select>
+            </FormControl>
+            <FormControl>
+              <FormLabel fontSize="xl" htmlFor="subtitle" color="gray.500">
+                PRICE
+              </FormLabel>
+              <Input
+                {...price}
+                focusBorderColor="bluebdd.500"
+                size="m"
+                type="number"
+                id="price"
+                aria-describedby="subtitle-helper-text"
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel fontSize="xl" htmlFor="url" color="gray.500">
+                DISCOUNT
+              </FormLabel>
+              <Input
+                {...discount}
+                focusBorderColor="bluebdd.500"
+                size="m"
+                type="text"
+                id="url"
+                aria-describedby="url-helper-text"
               />
             </FormControl>
             <FormControl>
@@ -101,7 +121,7 @@ export default function HeaderCreate(props) {
               <Input
                 {...photo}
                 onChange={handleImage}
-                size="md"
+                size="m"
                 type="file"
                 id="photo"
               />
