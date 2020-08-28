@@ -10,11 +10,16 @@ import {
   Textarea,
   RadioGroup,
   Radio,
-  Select
+  Select,
+  Icon
 } from '@chakra-ui/core'
 import MyModal from './MyModal'
+import useForm from '../hooks/useForm'
+
 
 export default function ProductsCreate(props) {
+  const [form, handleInput] = useForm()
+  
   const {
     submit,
     cancel,
@@ -27,9 +32,33 @@ export default function ProductsCreate(props) {
     modalInfo,
     visibility,
     closeModal,
-    handleImage
+    handleImage,
+    specifications,
+    setSpecifications,
   } = props
 
+  const product = {
+    titleSpecification: form.titleSpecification,
+    descriptionProduct: form.descriptionProduct
+
+  }
+
+  const addToCart = (product) =>{
+    if (specifications.title === ''){
+      console.log('The field Title is required to add item')
+    }
+
+    else if( form.descriptionProduct === ''){
+      console.log('The field rate is required to add item')
+    } 
+    else{
+      document.getElementById("titleSpecification").value = "";
+      document.getElementById("descriptionProduct").value = "";
+
+      setSpecifications(prevState => [...prevState, product])
+
+    }
+  }
   return (
     <>
       <Box
@@ -42,7 +71,7 @@ export default function ProductsCreate(props) {
         flexDirection="column"
       >
         <Box as="form" onSubmit={submit} display="flex" flexDirection="column">
-          <SimpleGrid w="100%" columns="3" spacing={[5, 5, 5, 20]}>
+          <SimpleGrid w="100%" columns="2" spacing={[5, 5, 5, 20]}>
             <FormControl>
               <FormLabel fontSize="xl" htmlFor="title" color="gray.500">
                 TITLE
@@ -69,6 +98,7 @@ export default function ProductsCreate(props) {
                 resize="none"
               />
             </FormControl>
+            
             <FormControl>
               <FormLabel fontSize="xl" htmlFor="cathegory" color="graypf.500">
                 CATHEGORY
@@ -80,7 +110,7 @@ export default function ProductsCreate(props) {
                 type="select"
                 size="m" 
                 id="cathegory">
-                <option value="hdtvs" selected disabled>SELECT ONE</option>
+                <option  selected>SELECT ONE</option>
                 <option value="hdtvs">HDTV'S</option>
                 <option value="accesories">ACCESORIES</option>
                 <option value="computers">COMPUTERS</option>
@@ -125,6 +155,67 @@ export default function ProductsCreate(props) {
                 type="file"
                 id="photo"
               />
+            </FormControl>
+            <FormControl>
+            <FormLabel fontSize="xl" htmlFor="description" color="gray.500">
+             SPECIFICATIONS
+            </FormLabel>
+              <table>
+                <thead>
+                <tr>
+                  <th scope="col">Title</th>
+                  <th scope="col">Description</th>
+                  <th scope="col">Options</th>
+                </tr>
+              </thead>
+                <tbody>
+                {specifications.length === 0 ? 'Add Specifications' : specifications.map((el, i) => (
+                  <tr key={i}>
+                    <td>
+                    {el.titleSpecification}
+                    </td>
+                    <td>
+                    {el.descriptionProduct}
+                    </td>
+                    <td>
+                    <Icon cursor="pointer" name="trash" onClick={e =>
+      
+                      setSpecifications(prevState => {
+                      var filter = specifications.filter(e => e !== specifications[i])
+                          setSpecifications( filter)
+                      })} />
+                  </td>
+                </tr>
+                  )) }
+                </tbody>
+              </table>
+              <br/>
+              <label className="form-control-label" htmlFor="input-merchant">Title Specification *</label>
+              <Input
+                name="titleSpecification"
+                placeholder="Enter a title specification"
+                type="text"
+                id="titleSpecification"
+                size="m"
+                onChange={handleInput}
+              />
+              <br/>
+              <label className="form-control-label" htmlFor="input-merchant">Description Specification</label>
+              <Input
+                name="descriptionProduct"
+                size="m"
+                placeholder="Enter a description of specification"
+                type="text"
+                id="descriptionProduct"
+                onChange={handleInput}
+              />
+              <br/>
+              <Button
+                variantColor="bluebdd"
+                onClick={(e) => addToCart(product)}
+              >
+                Add Specification
+              </Button>
             </FormControl>
 
 

@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react'
 import useSWR from 'swr'
 import composeData from '../../utils/composeData'
 import handleAsync from '../../utils/handleAsync'
-import { ALL_URL, ALL_FETCHER, CREATE_BANNER, DELETE_BANNER } from '../../services/banner_service'
+import { ALL_URL, ALL_FETCHER, CREATE_BANNER, UPDATE_BANNER, DELETE_BANNER } from '../../services/banner_service'
 import { UPLOAD_PHOTO} from '../../services/general_service'
 import { Flex, Heading, Button, SimpleGrid } from '@chakra-ui/core'
 import BannerCreate from '../../components/BannerCreate'
@@ -71,6 +71,15 @@ export default function BannerSection() {
       false
     )
   }
+  if(!banners) return <p>Loading</p>
+  let bannerFilters = banners.filter(banner => banner.available )
+  console.log(bannerFilters)
+  const changeAble = async (id, data) =>{
+
+    const response =  await handleAsync(()=> UPDATE_BANNER(id, data)) 
+    mutate([response.banner, data.banners], true) 
+
+  }
 
   return (
     <Flex direction="column" align="flex-start" h="100%">
@@ -87,7 +96,7 @@ export default function BannerSection() {
           <Heading size="md" as="h3" color="bluebdd.800" mb={[3, 3, 5, 5]}>
             Banner Entries
           </Heading>
-          <BannerCard deleteHeader={deleteBanner} data={banners} />
+          <BannerCard deleteBanner={deleteBanner} changeAble={changeAble} data={banners} />
         </>
       ) : (
         <BannerCreate

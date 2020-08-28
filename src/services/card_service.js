@@ -15,5 +15,6 @@ export const ALL_FETCHER = async url => {
 }
 
 export const CREATE_CARD = data => service.post('/create', data)
+export const UPDATE_CARD = (id, data) => service.patch(`/update/${id}`, data)
 
 export const DELETE_CARD = id => service.delete(`/delete/${id}`)

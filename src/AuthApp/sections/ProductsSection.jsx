@@ -12,9 +12,7 @@ import useInput from '../../hooks/useInput'
 export default function ProductsSection() {
   const [create, setCreate] = useState(false)
   const [img, setImg] = useState('')
-  const imgEl = useRef()
-
-  const uploadImage = () => imgEl.current.click()
+  const [specifications, setSpecifications] = useState([])
 
   const handleImage = async e => {
     const formData = new FormData()
@@ -23,7 +21,7 @@ export default function ProductsSection() {
     const {img} = response
     setImg(img)
   }
-
+  
   // create data
   const title = useInput('')
   const price = useInput('')
@@ -37,11 +35,12 @@ export default function ProductsSection() {
   const [visibility, setVisibility] = useState(false)
   const [modalInfo, setModalInfo] = useState({ title: '', content: '', type: 'success' })
 
+
   const submit = async e => {
     e.preventDefault()
     const newProduct = composeData({ title, price, description, cathegory, discount  })
     console.log(newProduct)
-    const response = await handleAsync(() => CREATE_PRODUCT({newProduct, img}))
+    const response = await handleAsync(() => CREATE_PRODUCT({newProduct, img, specifications}))
     if (response.product) {
       setModalInfo({
         title: 'Product Created',
@@ -98,6 +97,7 @@ export default function ProductsSection() {
           closeModal={closeModal}
           modalInfo={modalInfo}
           submit={submit}
+          specifications={specifications}
           title={title}
           description={description}
           discount={discount}
@@ -105,6 +105,7 @@ export default function ProductsSection() {
           cathegory={cathegory}
           handleImage={handleImage}
           cancel={() => setCreate(false)}
+          setSpecifications={setSpecifications}
         />
       )}
     </Flex>

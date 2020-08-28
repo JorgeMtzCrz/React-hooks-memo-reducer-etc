@@ -8,19 +8,23 @@ export default function ProductsCard({ data = [], deleteProduct }) {
   const columns = useMemo(
     () => [
       {
-        Header: 'Name',
+        Header: 'NAME',
         accessor: 'title'
       },
       {
-        Header: 'Description',
-        accessor: 'description'
-      },
-      {
-        Header: 'Cathegory',
+        Header: 'CATHEGORY',
         accessor: 'cathegory'
       },
       {
-        Header: 'Date Added',
+        Header: 'PRICE',
+        accessor: 'price',
+      },
+      {
+        Header: 'URL',
+        accessor: 'url'
+      },
+      {
+        Header: 'ADDED DATE',
         Cell: ({ value }) =>
           new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles' }).format(new Date(value)),
         accessor: 'createdAt'

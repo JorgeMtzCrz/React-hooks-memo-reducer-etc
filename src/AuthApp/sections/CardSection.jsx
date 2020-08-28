@@ -2,19 +2,16 @@ import React, { useState, useRef } from 'react'
 import useSWR from 'swr'
 import composeData from '../../utils/composeData'
 import handleAsync from '../../utils/handleAsync'
-import { ALL_URL, ALL_FETCHER, CREATE_CARD, DELETE_CARD } from '../../services/card_service'
+import { ALL_URL, ALL_FETCHER, CREATE_CARD, DELETE_CARD, UPDATE_CARD } from '../../services/card_service'
 import { UPLOAD_PHOTO} from '../../services/general_service'
 import { Flex, Heading, Button, SimpleGrid } from '@chakra-ui/core'
-import CardCreate from '../../components/HeaderCreate'
-import CardCard from '../../components/HeaderCard'
+import CardCreate from '../../components/CardCreate'
+import CardCard from '../../components/CardCard'
 import useInput from '../../hooks/useInput'
 
 export default function CardSection() {
   const [create, setCreate] = useState(false)
   const [img, setImg] = useState('')
-  const imgEl = useRef()
-
-  const uploadImage = () => imgEl.current.click()
 
   const handleImage = async e => {
     const formData = new FormData()
@@ -32,9 +29,12 @@ export default function CardSection() {
 
 
   const { data, mutate } = useSWR(ALL_URL, ALL_FETCHER)
+  
   const cards = data && data.cards
+
   const [visibility, setVisibility] = useState(false)
   const [modalInfo, setModalInfo] = useState({ title: '', content: '', type: 'success' })
+
 
   const submit = async e => {
     e.preventDefault()
@@ -73,6 +73,18 @@ export default function CardSection() {
     )
   }
 
+
+
+
+  if(!cards) return <p>Loading</p>
+  let cardFilters = cards.filter(card => card.available === true)
+
+  const changeAble = async (id, data) =>{
+    const response = await handleAsync(()=> UPDATE_CARD(id, data))
+    mutate([response.card, data.cards], true)
+
+  }
+
   return (
     <Flex direction="column" align="flex-start" h="100%">
       <Heading size="lg" as="h2" color="gray.500" mb={[3, 3, 5, 10]}>
@@ -88,7 +100,7 @@ export default function CardSection() {
           <Heading size="md" as="h3" color="bluebdd.800" mb={[3, 3, 5, 5]}>
             Card Entries
           </Heading>
-          <CardCard deleteHeader={deleteCard} data={cards} />
+          <CardCard deleteCard={deleteCard} changeAble={changeAble} data={cards} />
         </>
       ) : (
         <CardCreate

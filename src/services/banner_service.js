@@ -15,5 +15,5 @@ export const ALL_FETCHER = async url => {
 }
 
 export const CREATE_BANNER = data => service.post('/create', data)
-
+export const UPDATE_BANNER = (id, data) => service.patch(`/update/${id}`, data)
 export const DELETE_BANNER = id => service.delete(`/delete/${id}`)

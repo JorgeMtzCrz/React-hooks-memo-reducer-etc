@@ -15,5 +15,5 @@ export const ALL_FETCHER = async url => {
 }
 
 export const CREATE_HEADER = data => service.post('/create', data)
-
+export const UPDATE_HEADER = (id, data) => service.patch(`/update/${id}`, data)
 export const DELETE_HEADER = id => service.delete(`/delete/${id}`)

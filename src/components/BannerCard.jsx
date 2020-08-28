@@ -1,9 +1,13 @@
 import React, { useMemo } from 'react'
-import { Box, Icon, Tag, TagLabel, Stack } from '@chakra-ui/core'
+import { Box, Icon, Tag, Button, TagLabel, Stack } from '@chakra-ui/core'
 import { useTable } from 'react-table'
 
-export default function BannerCard({ data = [], deleteBanner }) {
+export default function BannerCard({ data = [], deleteBanner, changeAble }) {
   const banners = useMemo(() => data, [data])
+
+  banners.map((e,i) => 
+    e.status = {available: e.available, id: e._id}
+  )
 
   const columns = useMemo(
     () => [
@@ -21,14 +25,18 @@ export default function BannerCard({ data = [], deleteBanner }) {
           new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles' }).format(new Date(value)),
         accessor: 'createdAt'
       },
-
+      {
+        Header: 'STATUS',
+        Cell: ({ value }) => <Button onClick={() => changeAble(value.id, value.id) } variantColor={value.available ? "green" : "red"}>{value.available ? "Enabled":"Disabled"}</Button>,
+        accessor: `status`,
+      },
       {
         Header: '',
         Cell: ({ value }) => <Icon cursor="pointer" name="trash" onClick={() => deleteBanner(value)} />,
         accessor: '_id'
       }
     ],
-    [deleteBanner]
+    [deleteBanner, changeAble]
   )
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({
