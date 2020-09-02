@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react'
 import useSWR from 'swr'
 import composeData from '../../utils/composeData'
 import handleAsync from '../../utils/handleAsync'
-import { ALL_URL, ALL_FETCHER, CREATE_HEADER, DELETE_HEADER } from '../../services/header_service'
+import { ALL_URL, ALL_FETCHER, CREATE_HEADER, UPDATE_HEADER, DELETE_HEADER } from '../../services/header_service'
 import { UPLOAD_PHOTO} from '../../services/general_service'
 import { Flex, Heading, Button, SimpleGrid } from '@chakra-ui/core'
 import HeaderCreate from '../../components/HeaderCreate'
@@ -73,6 +73,15 @@ export default function HeaderSection() {
     )
   }
 
+  if(!headers) return <p>Loading</p>
+  let headerFilters = headers.filter(header => header.available === true)
+
+  const changeAble = async (id, data) =>{
+    const response = await handleAsync(()=> UPDATE_HEADER(id, data))
+    mutate([response.header, data.headers], true)
+
+  }
+
   return (
     <Flex direction="column" align="flex-start" h="100%">
       <Heading size="lg" as="h2" color="gray.500" mb={[3, 3, 5, 10]}>
@@ -88,7 +97,7 @@ export default function HeaderSection() {
           <Heading size="md" as="h3" color="bluebdd.800" mb={[3, 3, 5, 5]}>
             Header Entries
           </Heading>
-          <HeaderCard deleteHeader={deleteHeader} data={headers} />
+          <HeaderCard changeAble={changeAble} deleteHeader={deleteHeader} data={headers} />
         </>
       ) : (
         <HeaderCreate

@@ -1,9 +1,13 @@
 import React, { useMemo } from 'react'
-import { Box, Icon, Tag, TagLabel, Stack } from '@chakra-ui/core'
+import { Box, Icon, Tag, Button, TagLabel, Stack } from '@chakra-ui/core'
 import { useTable } from 'react-table'
 
-export default function HeaderCard({ data = [], deleteHeader }) {
+export default function HeaderCard({ data = [], deleteHeader, changeAble }) {
   const headers = useMemo(() => data, [data])
+
+  headers.map((e,i) => 
+    e.status = {available: e.available, id: e._id}
+  )
 
   const columns = useMemo(
     () => [
@@ -20,6 +24,11 @@ export default function HeaderCard({ data = [], deleteHeader }) {
         accessor: 'description'
       },
       {
+        Header: 'STATUS',
+        Cell: ({ value }) => <Button onClick={() => changeAble(value.id, value.id) } variantColor={value.available ? "green" : "red"}>{value.available ? "Enabled":"Disabled"}</Button>,
+        accessor: `status`,
+      },
+      {
         Header: 'Date Added',
         Cell: ({ value }) =>
           new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles' }).format(new Date(value)),
@@ -32,7 +41,7 @@ export default function HeaderCard({ data = [], deleteHeader }) {
         accessor: '_id'
       }
     ],
-    [deleteHeader]
+    [deleteHeader, changeAble]
   )
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({

@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
 import { Box, Icon, Tag, TagLabel, Stack } from '@chakra-ui/core'
 import { useTable } from 'react-table'
+import Clipboard from 'react-clipboard.js';
 
 export default function ProductsCard({ data = [], deleteProduct }) {
   const products = useMemo(() => data, [data])
@@ -21,6 +22,7 @@ export default function ProductsCard({ data = [], deleteProduct }) {
       },
       {
         Header: 'URL',
+        Cell: ({ value }) => <div>{value} <Clipboard button-title="Copy text" data-clipboard-text={value}> <Icon cursor="pointer" name="copy" /></Clipboard></div>,
         accessor: 'url'
       },
       {
