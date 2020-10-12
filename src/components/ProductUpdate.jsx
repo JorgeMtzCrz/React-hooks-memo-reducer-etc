@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import {
   Box,
   Button,
@@ -13,38 +13,62 @@ import {
   Select,
   Icon
 } from '@chakra-ui/core'
-import MyModal from './MyModal'
+import { ALL_FETCHER, UPDATE_PRODUCT_INFO } from '../services/products_service'
 import useForm from '../hooks/useForm'
+import useSWR from 'swr'
+import handleAsync from '../utils/handleAsync'
+import { UPLOAD_PHOTO} from '../services/general_service'
+import composeData from '../utils/composeData'
+import useInput from '../hooks/useInput'
+import Loader from './Loader'
+import axios from 'axios'
+import MyModal from './MyModal'
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 
 
-export default function ProductsCreate(props) {
+
+const baseURL = 'http://localhost:3000/product'
+//const baseURL = 'https://bestdealtest.herokuapp.com/product'
+//const baseURL = 'https://bestdealapp.herokuapp.com/product'
+
+export default function ProductUpdate(props) {
   const [form, handleInput] = useForm()
-  
-  const {
-    submit,
-    cancel,
-    title,
-    price,
-    discount,
-    photo,
-    description,
-    cathegory,
-    modalInfo,
-    visibility,
-    closeModal,
-    handleImage,
-    specifications,
-    setSpecifications,
-    img
-  } = props
+  const [img, setImg] = useState('')
+  const [specifications, setSpecifications] = useState([])
+  const [modalInfo, setModalInfo] = useState({ title: '', content: '', type: 'success' })
+  const [visibility, setVisibility] = useState(false)
+  const [product, setUpdateProduct] = useState(null)
+  const history = useHistory()
 
-  const product = {
+  useEffect(()=>{
+    axios(`${baseURL}/detail/${props.match.params.id}`)
+    .then(({data:{product}})=>{
+      setUpdateProduct(product)
+      setSpecifications(product.specifications)
+      setImg(product.img)
+    })
+
+  },[])
+  const product2 = {
     titleSpecification: form.titleSpecification,
     descriptionProduct: form.descriptionProduct
 
   }
 
-  const addToCart = (product) =>{
+  const closeModal = () => {
+    setVisibility(false)
+    history.push('/app/products')
+  }
+
+  const handleImage = async e => {
+    const formData = new FormData()
+    formData.append('photo', e.target.files[0])
+    const response = await handleAsync(() => UPLOAD_PHOTO(formData))
+    const {img} = response
+    setImg(img)
+  }
+
+  const addToCart = (product2) =>{
     if (specifications.title === ''){
       console.log('The field Title is required to add spec')
     }
@@ -56,10 +80,43 @@ export default function ProductsCreate(props) {
       document.getElementById("titleSpecification").value = "";
       document.getElementById("descriptionProduct").value = "";
 
-      setSpecifications(prevState => [...prevState, product])
+      setSpecifications(prevState => [...prevState, product2])
 
     }
   }
+
+  const data ={
+    img: img,
+    specifications: specifications,
+    title: form.title,
+    discount: form.discount,
+    price: form.price,
+    cathegory: form.cathegory
+  }
+
+  const submit = async e => {
+    e.preventDefault()
+    const response = await handleAsync(() => UPDATE_PRODUCT_INFO(props.match.params.id, data))
+    if (response.product) {
+      setModalInfo({
+        title: 'Product Created',
+        content: 'Your product has been updated successfully!',
+        type: 'success'
+      })
+    } else {
+      setModalInfo({
+        title: 'ERROR',
+        content:
+          'UH OH! There has been an error and your product has not been updated. Please check your internet connection and try again.',
+        type: 'error'
+      })
+    }
+    setVisibility(true)
+  }
+
+
+  if(!product) return <Loader/>
+
   return (
     <>
       <Box
@@ -78,12 +135,14 @@ export default function ProductsCreate(props) {
                 TITLE
               </FormLabel>
               <Input
-                {...title}
+                defaultValue={product.title}
                 focusBorderColor="bluebdd.500"
                 size="m"
                 type="text"
                 id="title"
+                name="title"
                 aria-describedby="subject-helper-text"
+                onChange={handleInput}
               />
             </FormControl>
             <FormControl>
@@ -91,12 +150,14 @@ export default function ProductsCreate(props) {
                 DESCRIPTION
               </FormLabel>
               <Textarea
-                {...description}
+                defaultValue={product.description}
                 id="description"
+                name="description"
                 aria-describedby="description-helper-text"
                 focusBorderColor="bluebdd.500"
                 size="m"
                 resize="none"
+                onChange={handleInput}
               />
             </FormControl>
             
@@ -105,13 +166,16 @@ export default function ProductsCreate(props) {
                 CATHEGORY
               </FormLabel>
               <Select
-                {...cathegory} 
                 aria-describedby="description-helper-text"
                 color="gray.500"
                 type="select"
                 size="m" 
-                id="cathegory">
-                <option  selected>SELECT ONE</option>
+                id="cathegory"
+                name="cathegory"
+                defaultValue={product.cathegory}
+                onChange={handleInput}
+                >
+                
                 <option value="hdtvs">HDTV'S</option>
                 <option value="accesories">ACCESORIES</option>
                 <option value="computers">COMPUTERS</option>
@@ -124,25 +188,29 @@ export default function ProductsCreate(props) {
                 PRICE
               </FormLabel>
               <Input
-                {...price}
                 focusBorderColor="bluebdd.500"
                 size="m"
                 type="number"
                 id="price"
+                name="price"
                 aria-describedby="subtitle-helper-text"
+                defaultValue={product.price}
+                onChange={handleInput}
               />
             </FormControl>
             <FormControl>
-              <FormLabel fontSize="xl" htmlFor="url" color="gray.500">
+              <FormLabel fontSize="xl" htmlFor="discount" color="gray.500">
                 DISCOUNT
               </FormLabel>
               <Input
-                {...discount}
+                defaultValue={product.discount}
                 focusBorderColor="bluebdd.500"
                 size="m"
                 type="number"
-                id="url"
+                name="discount"
+                id="discount"
                 aria-describedby="url-helper-text"
+                onChange={handleInput}
               />
             </FormControl>
             
@@ -168,12 +236,12 @@ export default function ProductsCreate(props) {
                     {el.descriptionProduct}
                     </td>
                     <td>
-                    <Icon cursor="pointer" name="trash" onClick={e =>
-      
-                      setSpecifications(prevState => {
+                    <Icon cursor="pointer" name="trash" onClick={e =>{
                       let filter = specifications.filter(e => e !== specifications[i])
-                        setSpecifications( filter)
-                      })} />
+
+                      setSpecifications(filter)
+                    }
+                      } />
                   </td>
                 </tr>
                   )) }
@@ -202,7 +270,7 @@ export default function ProductsCreate(props) {
               <br/>
               <Button
                 variantColor="bluebdd"
-                onClick={(e) => addToCart(product)}
+                onClick={(e) => addToCart(product2)}
               >
                 Add Specification
               </Button>
@@ -212,11 +280,11 @@ export default function ProductsCreate(props) {
                 IMAGE
               </FormLabel>
               <Input
-                {...photo}
                 onChange={handleImage}
                 size="m"
                 type="file"
                 id="photo"
+                name="photo"
               />
             </FormControl>
             <FormControl>
@@ -229,9 +297,6 @@ export default function ProductsCreate(props) {
 
           </SimpleGrid>
           <ButtonGroup mt={20} spacing={16} alignSelf="flex-start">
-            <Button onClick={cancel} w="124px" h="52px" variantColor="red">
-              CANCEL
-            </Button>
             <Button disabled={img ? false : true} onClick={submit} type="submit" w="124px" h="52px" variantColor="bluebdd" variant="solid">
               SEND
             </Button>

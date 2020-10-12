@@ -1,6 +1,8 @@
 import axios from 'axios'
 
-const baseURL = 'http://localhost:3000/card'
+//const baseURL = 'http://localhost:3000/card'
+//const baseURL = 'https://bestdealtest.herokuapp.com/card'
+const baseURL = 'https://bestdealapp.herokuapp.com/card'
 
 const service = axios.create({
     baseURL,

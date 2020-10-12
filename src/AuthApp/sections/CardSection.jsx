@@ -111,6 +111,7 @@ export default function CardSection() {
           title={title}
           subtitle={subtitle}
           url={url}
+          img={img}
           description={description}
           handleImage={handleImage}
           cancel={() => setCreate(false)}

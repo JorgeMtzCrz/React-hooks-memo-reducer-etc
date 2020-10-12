@@ -107,6 +107,7 @@ export default function BannerSection() {
           title={title}
           subtitle={subtitle}
           url={url}
+          img={img}
           handleImage={handleImage}
           cancel={() => setCreate(false)}
         />

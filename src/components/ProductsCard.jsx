@@ -1,11 +1,16 @@
 import React, { useMemo } from 'react'
-import { Box, Icon, Tag, TagLabel, Stack } from '@chakra-ui/core'
+import { Box, Button, Icon, Tag, TagLabel, Stack } from '@chakra-ui/core'
 import { useTable } from 'react-table'
 import Clipboard from 'react-clipboard.js';
+import { Link } from 'react-router-dom';
 
-export default function ProductsCard({ data = [], deleteProduct }) {
+export default function ProductsCard({ data = [], deleteProduct, changeAble }) {
   const products = useMemo(() => data, [data])
-
+  products.map((e,i) => {
+  return(e.status = {available: e.available, id: e._id},
+  e.update = {id:e._id})
+  }
+  )
   const columns = useMemo(
     () => [
       {
@@ -26,12 +31,15 @@ export default function ProductsCard({ data = [], deleteProduct }) {
         accessor: 'url'
       },
       {
-        Header: 'ADDED DATE',
-        Cell: ({ value }) =>
-          new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles' }).format(new Date(value)),
-        accessor: 'createdAt'
+        Header: 'STATUS',
+        Cell: ({ value }) => <Button onClick={() => changeAble(value.id, value.id) } variantColor={value.available ? "green" : "red"}>{value.available ? "Enabled":"Disabled"}</Button>,
+        accessor: `status`,
       },
-
+      {
+        Header: 'UPDATE',
+        Cell: ({ value }) =><Link to={`/app/products/update/${value.id}`}><Icon cursor="pointer" name="update" /></Link> ,
+        accessor: 'update'
+      },
       {
         Header: '',
         Cell: ({ value }) => <Icon cursor="pointer" name="trash" onClick={() => deleteProduct(value)} />,

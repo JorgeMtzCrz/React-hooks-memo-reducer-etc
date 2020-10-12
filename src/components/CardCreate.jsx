@@ -25,7 +25,8 @@ export default function CardCreate(props) {
     modalInfo,
     visibility,
     closeModal,
-    handleImage
+    handleImage,
+    img
   } = props
 
   return (
@@ -105,6 +106,12 @@ export default function CardCreate(props) {
                 id="photo"
               />
             </FormControl>
+            <FormControl>
+              <FormLabel fontSize="xl" htmlFor="photo" color="gray.500">
+                IMAGE PREVIEW
+              </FormLabel>
+              {img && <img width="500px" height="600px" src={img} alt="photo_url" />}
+            </FormControl>
 
 
           </SimpleGrid>
@@ -112,7 +119,7 @@ export default function CardCreate(props) {
             <Button onClick={cancel} w="124px" h="52px" variantColor="red">
               CANCEL
             </Button>
-            <Button onClick={submit} type="submit" w="124px" h="52px" variantColor="bluebdd" variant="solid">
+            <Button disabled={img ? false : true} onClick={submit} type="submit" w="124px" h="52px" variantColor="bluebdd" variant="solid">
               SEND
             </Button>
           </ButtonGroup>
