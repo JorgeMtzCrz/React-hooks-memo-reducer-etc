@@ -1,13 +1,17 @@
 import React, { useMemo } from 'react'
 import { Box, Icon, Button, Tag, TagLabel, Stack } from '@chakra-ui/core'
 import { useTable } from 'react-table'
+import {Link} from 'react-router-dom'
 
 export default function CardCard({ data = [], deleteCard, changeAble }) {
   const cards = useMemo(() => data, [data])
 
-  cards.map((e,i) => 
-    e.status = {available: e.available, id: e._id}
-  )
+  cards.map((e,i) =>{
+    return(
+      e.status = {available: e.available, id: e._id},
+      e.update = {id:e._id}
+    )
+  })
  
   const columns = useMemo(
     () => [
@@ -24,17 +28,21 @@ export default function CardCard({ data = [], deleteCard, changeAble }) {
         accessor: 'description'
       },
       {
-        Header: 'STATUS',
-        Cell: ({ value }) => <Button onClick={() => changeAble(value.id, value.id) } variantColor={value.available ? "green" : "red"}>{value.available ? "Enabled":"Disabled"}</Button>,
-        accessor: `status`,
-      },
-      {
         Header: 'DATE ADDED',
         Cell: ({ value }) =>
           new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles' }).format(new Date(value)),
         accessor: 'createdAt'
       },
-
+      {
+        Header: 'STATUS',
+        Cell: ({ value }) => <Button onClick={() => changeAble(value.id, value.id) } variantColor={value.available ? "green" : "red"}>{value.available ? "Enabled":"Disabled"}</Button>,
+        accessor: `status`,
+      },
+      {
+        Header: 'UPDATE',
+        Cell: ({ value }) =><Link to={`/app/cards/update/${value.id}`}><Icon  cursor="pointer" name="update" /></Link> ,
+        accessor: 'update'
+      },
       {
         Header: '',
         Cell: ({ value }) => <Icon cursor="pointer" name="trash" onClick={() => deleteCard(value)} />,

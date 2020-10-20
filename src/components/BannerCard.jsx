@@ -1,13 +1,17 @@
 import React, { useMemo } from 'react'
 import { Box, Icon, Tag, Button, TagLabel, Stack } from '@chakra-ui/core'
 import { useTable } from 'react-table'
+import {Link} from 'react-router-dom'
 
 export default function BannerCard({ data = [], deleteBanner, changeAble }) {
   const banners = useMemo(() => data, [data])
 
-  banners.map((e,i) => 
-    e.status = {available: e.available, id: e._id}
-  )
+  banners.map((e,i) =>{
+    return(
+      e.status = {available: e.available, id: e._id},
+      e.update = {id:e._id}
+    )
+  })
 
   const columns = useMemo(
     () => [
@@ -29,6 +33,11 @@ export default function BannerCard({ data = [], deleteBanner, changeAble }) {
         Header: 'STATUS',
         Cell: ({ value }) => <Button onClick={() => changeAble(value.id, value.id) } variantColor={value.available ? "green" : "red"}>{value.available ? "Enabled":"Disabled"}</Button>,
         accessor: `status`,
+      },
+      {
+        Header: 'UPDATE',
+        Cell: ({ value }) =><Link to={`/app/banners/update/${value.id}`}><Icon  cursor="pointer" name="update" /></Link> ,
+        accessor: 'update'
       },
       {
         Header: '',

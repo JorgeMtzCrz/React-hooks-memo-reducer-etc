@@ -27,9 +27,9 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 
 
 
-const baseURL = 'http://localhost:3000/product'
+//const baseURL = 'http://localhost:3000/product'
 //const baseURL = 'https://bestdealtest.herokuapp.com/product'
-//const baseURL = 'https://bestdealapp.herokuapp.com/product'
+const baseURL = 'https://bestdealapp.herokuapp.com/product'
 
 export default function ProductUpdate(props) {
   const [form, handleInput] = useForm()
@@ -91,7 +91,8 @@ export default function ProductUpdate(props) {
     title: form.title,
     discount: form.discount,
     price: form.price,
-    cathegory: form.cathegory
+    cathegory: form.cathegory,
+    description: form.description
   }
 
   const submit = async e => {

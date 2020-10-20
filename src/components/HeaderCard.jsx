@@ -1,12 +1,15 @@
 import React, { useMemo } from 'react'
 import { Box, Icon, Tag, Button, TagLabel, Stack } from '@chakra-ui/core'
 import { useTable } from 'react-table'
+import {Link} from 'react-router-dom'
 
 export default function HeaderCard({ data = [], deleteHeader, changeAble }) {
   const headers = useMemo(() => data, [data])
 
-  headers.map((e,i) => 
-    e.status = {available: e.available, id: e._id}
+  headers.map((e,i) => {
+    return(e.status = {available: e.available, id: e._id},
+    e.update = {id:e._id})
+  }
   )
 
   const columns = useMemo(
@@ -28,13 +31,12 @@ export default function HeaderCard({ data = [], deleteHeader, changeAble }) {
         Cell: ({ value }) => <Button onClick={() => changeAble(value.id, value.id) } variantColor={value.available ? "green" : "red"}>{value.available ? "Enabled":"Disabled"}</Button>,
         accessor: `status`,
       },
-      {
-        Header: 'Date Added',
-        Cell: ({ value }) =>
-          new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles' }).format(new Date(value)),
-        accessor: 'createdAt'
-      },
 
+      {
+        Header: 'UPDATE',
+        Cell: ({ value }) =><Link to={`/app/headers/update/${value.id}`}><Icon cursor="pointer" name="update" /></Link> ,
+        accessor: 'update'
+      },
       {
         Header: '',
         Cell: ({ value }) => <Icon cursor="pointer" name="trash" onClick={() => deleteHeader(value)} />,
